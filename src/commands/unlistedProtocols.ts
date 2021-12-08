@@ -3,7 +3,7 @@ import { Message } from "discord.js";
 import { getProtocols, refreshAdapters, exec } from './utils'
 import fs from "fs"
 
-const ignoredFiles = ["helper"]
+const ignoredFiles = ["helper", "config"]
 
 export class Unlisted implements Command {
     commandNames = ["unlisted"];
