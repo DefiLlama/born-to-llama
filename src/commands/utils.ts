@@ -32,8 +32,8 @@ export async function getProtocols() {
 }
 
 export async function getSimpleProtocols() {
-    const protocols = await axios.get("https://api.llama.fi/rawprotocols")
-    return protocols.data as any[]
+    const protocols = await axios.get("https://api.llama.fi/config")
+    return protocols.data.protocols as any[]
 }
 
 export const exec = util.promisify(execRaw);
