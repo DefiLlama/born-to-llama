@@ -8,8 +8,8 @@ export class TimeCommand implements Command {
     return `Use ${commandPrefix}time to current time.`;
   }
 
-  async run(message: Message): Promise<void> {
+  async run(message: Message): Promise<string> {
     const now = new Date();
-    await message.reply(`Current timestamp: ${Math.floor(now.getTime()/1000)}`);
+    return `Current timestamp: ${Math.floor(now.getTime()/1000)}`;
   }
 }

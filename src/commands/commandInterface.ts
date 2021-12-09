@@ -12,5 +12,5 @@ export default interface Command {
   //help(commandPrefix: string): string;
 
   /** Execute the command. */
-  run(parsedUserCommand: Message, parsedCommand?:CommandParser): Promise<void>;
+  run(parsedUserCommand: Message, parsedCommand?:CommandParser): Promise<string>;
 }

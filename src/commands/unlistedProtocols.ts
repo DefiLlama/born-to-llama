@@ -1,6 +1,6 @@
 import Command from "./commandInterface";
 import { Message } from "discord.js";
-import { getProtocols, refreshAdapters, exec } from './utils'
+import { getSimpleProtocols, refreshAdapters, exec } from './utils'
 import fs from "fs"
 
 const ignoredFiles = ["helper", "config"]
@@ -8,9 +8,9 @@ const ignoredFiles = ["helper", "config"]
 export class Unlisted implements Command {
     commandNames = ["unlisted"];
 
-    async run(message: Message): Promise<void> {
+    async run(message: Message): Promise<string> {
         const refreshPromise = refreshAdapters()
-        const protocols = await getProtocols()
+        const protocols = await getSimpleProtocols()
         await refreshPromise;
 
         const files = fs.readdirSync('./DefiLlama-Adapters/projects/');
@@ -23,6 +23,6 @@ export class Unlisted implements Command {
                 gitMofificationDate
             }
         }))).sort((a,b)=>a.gitMofificationDate.getTime()-b.gitMofificationDate.getTime())
-        await message.reply(`${unlistedWithdates.map(file=>`- ${file.file} (${file.gitMofificationDate.toDateString()})`).join('\n')}`);
+        return `${unlistedWithdates.map(file=>`- ${file.file} (${file.gitMofificationDate.toDateString()})`).join('\n')}`;
     }
 }

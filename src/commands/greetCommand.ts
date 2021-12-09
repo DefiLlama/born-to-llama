@@ -8,7 +8,7 @@ export class GreetCommand implements Command {
     return `Use ${commandPrefix}greet to get a greeting.`;
   }
 
-  async run(message: Message): Promise<void> {
-    await message.reply("hello, User!");
+  async run(message: Message): Promise<string> {
+    return "hello, User!";
   }
 }

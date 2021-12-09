@@ -3,7 +3,6 @@ import zlib from "zlib"
 import { Stream } from "stream";
 import util from 'util'
 import { exec as execRaw } from "child_process"
-import {CommandParser} from "../models/commandParser"
 
 function streamToString(stream: Stream) {
     const chunks = [] as any[];
@@ -29,6 +28,11 @@ export async function getLiteProtocols() {
 
 export async function getProtocols() {
     const protocols = await axios.get("https://api.llama.fi/protocols")
+    return protocols.data as any[]
+}
+
+export async function getSimpleProtocols() {
+    const protocols = await axios.get("https://api.llama.fi/rawprotocols")
     return protocols.data as any[]
 }
 

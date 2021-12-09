@@ -5,8 +5,8 @@ import { getLiteProtocols } from './utils'
 export class NumCommand implements Command {
   commandNames = ["protocols"];
 
-  async run(message: Message): Promise<void> {
+  async run(message: Message): Promise<string> {
     const protocols = await getLiteProtocols()
-    await message.reply(`Protocols currently listed: ${protocols.length}`);
+    return `Protocols currently listed: ${protocols.length}`;
   }
 }
