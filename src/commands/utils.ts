@@ -3,6 +3,7 @@ import zlib from "zlib"
 import { Stream } from "stream";
 import util from 'util'
 import { exec as execRaw } from "child_process"
+import fs from "fs"
 
 function streamToString(stream: Stream) {
     const chunks = [] as any[];
@@ -52,4 +53,16 @@ export async function topChangers(args: string[], gainers: boolean) {
         gainers ? b[prop] - a[prop] : a[prop] - b[prop]
     ).slice(0, amountToDisplay)
     return protocols.map(p => `${p[prop].toFixed(2)}% - ${p.name} - ${p.tvl}`).join('\n');
+}
+
+const ignoredFiles = ["helper", "config"]
+export async function getUnlistedProtocols() {
+    const refreshPromise = refreshAdapters()
+    const protocols = await getSimpleProtocols()
+    await refreshPromise;
+
+    const files = fs.readdirSync('./DefiLlama-Adapters/projects/');
+    const modules = protocols.map(p => p.module.split('/')[0])
+    const unlisted = files.filter(file => !modules.includes(file) && !ignoredFiles.includes(file))
+    return unlisted
 }
