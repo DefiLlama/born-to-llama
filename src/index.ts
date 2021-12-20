@@ -10,14 +10,14 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
-app.use(express.urlencoded({ extended: true }));
-
-app.use('/', (request: Request, response: Response) => {
+app.get('/refresh', (request: Request, response: Response) => {
+  triggerUnlistedAlarms(client);
   response.sendStatus(200);
 });
 
-app.get('/refresh', (request: Request, response: Response) => {
-  triggerUnlistedAlarms(client);
+app.use(express.urlencoded({ extended: true }));
+
+app.use('/', (request: Request, response: Response) => {
   response.sendStatus(200);
 });
 
