@@ -16,7 +16,7 @@ app.use('/', (request: Request, response: Response) => {
   response.sendStatus(200);
 });
 
-app.use('/refresh', (request: Request, response: Response) => {
+app.get('/refresh', (request: Request, response: Response) => {
   triggerUnlistedAlarms(client);
   response.sendStatus(200);
 });
