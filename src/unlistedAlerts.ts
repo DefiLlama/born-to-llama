@@ -11,11 +11,9 @@ export function setUnlistedProtocols() {
 }
 
 export async function triggerUnlistedAlarms(client: Discord.Client) {
-    console.log(unlisted)
     const newUnlisted = await getUnlistedProtocols()
     const oldUnlisted = [...unlisted];
     unlisted = newUnlisted;
-    console.log(newUnlisted, unlisted, oldUnlisted)
     await Promise.all(newUnlisted.map(async protocol => {
         if (!oldUnlisted.includes(protocol)) {
             const unlistedChannel = await client.channels.fetch(config['unlisted-channel']) as TextChannel;
