@@ -7,3 +7,4 @@ export * from "./text";
 export * from "./gainers";
 export * from "./tokenIds";
 export * from "./outdated";
+export * from "./chains";

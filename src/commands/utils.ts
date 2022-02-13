@@ -14,7 +14,7 @@ function streamToString(stream: Stream) {
     })
 }
 
-export async function getLiteProtocols() {
+export async function getRawLiteProtocols() {
     const protocols = await axios.get("https://api.llama.fi/lite/protocols2", {
         decompress: false,
         responseType: 'stream',
@@ -24,7 +24,13 @@ export async function getLiteProtocols() {
             return data.pipe(zlib.createBrotliDecompress())
         }
     }).then(r => streamToString(r.data)) as any
-    return JSON.parse(protocols).protocols as any[]
+    return JSON.parse(protocols) as any
+}
+
+
+export async function getLiteProtocols() {
+    const protocols = await getRawLiteProtocols()
+    return protocols.protocols as any[]
 }
 
 export async function getProtocols() {
