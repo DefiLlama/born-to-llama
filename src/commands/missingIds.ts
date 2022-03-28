@@ -31,6 +31,7 @@ interface Protocol {
 }
 
 function processItems(items: (CMCItem | CGItem)[], symbol: string) {
+	symbol = symbol.toLowerCase()
 	return items.filter((t) => t.symbol.toLowerCase() === symbol)
 		.map(t => `${t.id} (${t.name})`)
 }
@@ -67,9 +68,7 @@ export class MissingIdsCommand implements Command {
 					fixableText = `${fixableText}\n\n${name} (${symbol}):`
 					if (cmcSet) fixableText = `${fixableText}\n - CMC: ${cmcIds.join(', ')}`
 					if (cgSet) fixableText = `${fixableText}\n - Coingecko: ${cgIds.join(', ')}`
-				}
-
-				if (!cmcSet && !cgSet) {
+				} else (!cmcSet && !cgSet) {
 					if (cmcId) missingGecko.push(name)
 					else if (gecko_id) missingCMC.push(name)
 					else missingBoth.push(name)
