@@ -49,8 +49,8 @@ export class MissingIdsCommand implements Command {
 		])
 
 		const incompleteProtocols = protocols.filter(p => !p.cmcId || !p.gecko_id)
-		const namelessProtocols = protocols.filter(p => !p.symbol).map(p => p.name).join(' ')
-		let returnText = `Protocols without tokens: ${namelessProtocols}`
+		const namelessProtocols = protocols.filter(p => !p.symbol).map(p => p.name)
+		let returnText = `Protocols without tokens: ${namelessProtocols.length}\n${getSetsText(namelessProtocols)}`
 		const divider = '\n ---------- \n'
 		const missingGecko: string[] = []
 		const missingCMC: string[] = []
@@ -80,10 +80,17 @@ export class MissingIdsCommand implements Command {
 
 		return [
 			returnText,
-			`Unable to find token in Coingecko: ${missingGecko.join(', ')}`,
-			`Unable to find token in CMC: ${missingCMC.join(', ')}`,
-			`Unable to find token in both: ${missingBoth.join(', ')}`,
+			`Unable to find token in Coingecko: ${missingGecko.length}\n${getSetsText(missingGecko)}`,
+			`Unable to find token in CMC: ${missingCMC.length}\n${getSetsText(missingCMC)}`,
+			`Unable to find token in both: ${missingBoth.length}\n${getSetsText(missingBoth)}`,
 			fixableText,
 		].join(divider)
 	}
+}
+
+function getSetsText(array: string[], size = 10) {
+	const replyText = []
+	for (let i = 0; i < array.length; i += size)
+		replyText.push(array.slice(i, i + size))
+	return replyText.join('\n')
 }
