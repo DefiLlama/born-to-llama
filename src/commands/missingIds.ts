@@ -68,11 +68,14 @@ export class MissingIdsCommand implements Command {
 					fixableText = `${fixableText}\n\n${name} (${symbol}):`
 					if (cmcSet) fixableText = `${fixableText}\n - CMC: ${cmcIds.join(', ')}`
 					if (cgSet) fixableText = `${fixableText}\n - Coingecko: ${cgIds.join(', ')}`
-				} else if (!cmcSet && !cgSet) {
-					if (cmcId) missingGecko.push(name)
-					else if (gecko_id) missingCMC.push(name)
-					else missingBoth.push(name)
-				}
+				} else {
+					if (cmcId)
+						missingGecko.push(name)
+					else if (gecko_id)
+						missingCMC.push(name)
+					else
+						missingBoth.push(name)
+				};
 			})
 
 		return [
