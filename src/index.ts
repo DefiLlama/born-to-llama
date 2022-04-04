@@ -4,6 +4,7 @@ import { DISCORD_TOKEN } from './config/secrets';
 import CommandHandler from './commandHandler';
 import config from './config/botConfig';
 import {setUnlistedProtocols, triggerUnlistedAlarms} from './unlistedAlerts'
+import { getMostVisitedPages } from './reports/buildReport';
 
 const PORT = process.env.PORT || 5000;
 
@@ -12,6 +13,11 @@ const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAG
 
 app.get('/refresh', (request: Request, response: Response) => {
   triggerUnlistedAlarms(client);
+  response.sendStatus(200);
+});
+
+app.use('/send-daily-report', (request: Request, response: Response) => {
+  getMostVisitedPages();
   response.sendStatus(200);
 });
 
