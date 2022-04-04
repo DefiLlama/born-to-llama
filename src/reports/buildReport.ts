@@ -75,7 +75,7 @@ export async function getMostVisitedPages() {
         aggregates: "uniques",
         date_grouping: "day",
         field_grouping: "pathname",
-        limit: "30",
+        limit: "20",
         sort_by: "uniques:desc",
         date_from: prevDay,
         date_to: prevDay,
@@ -94,7 +94,8 @@ export async function getMostVisitedPages() {
             indexAxis: 'y',
           }
     }, {
-        height: 1e3
+        height: 600,
+        width: 600
     })
     await sendChart(image)
 }
