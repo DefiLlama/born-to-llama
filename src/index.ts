@@ -4,6 +4,7 @@ import { DISCORD_TOKEN } from './config/secrets';
 import CommandHandler from './commandHandler';
 import config from './config/botConfig';
 import {setUnlistedProtocols, triggerUnlistedAlarms} from './unlistedAlerts'
+import { checkApiStatus } from './checkApiServer'
 import { getMostVisitedPages } from './reports/buildReport';
 
 const PORT = process.env.PORT || 5000;
@@ -41,3 +42,4 @@ client.login(DISCORD_TOKEN);
 app.listen(PORT, () => console.log(`Server started on port ${PORT}!`));
 
 setUnlistedProtocols();
+checkApiStatus(client);
