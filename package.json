@@ -7,7 +7,7 @@
     "lint:fix": "eslint . --ext .ts --fix",
     "prestart:dev": "npm run build",
     "dev": "nodemon build/index.js",
-    "build": "tsc",
+    "build": "rm -rf DefiLlama-Adapters && tsc",
     "prestart": "npm run build",
     "start": "node build/index.js"
   },
