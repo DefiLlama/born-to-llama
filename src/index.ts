@@ -11,9 +11,14 @@ const PORT = process.env.PORT || 5000;
 
 const app = express();
 const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+let unlistedRunning = false;
 
 app.get('/refresh', (request: Request, response: Response) => {
-  triggerUnlistedAlarms(client);
+  if(!unlistedRunning){
+    unlistedRunning = true;
+    triggerUnlistedAlarms(client);
+    unlistedRunning = false;
+  }
   response.sendStatus(200);
 });
 
