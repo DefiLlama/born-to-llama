@@ -6,7 +6,7 @@ type BotConfig = {
 };
 
 const config: BotConfig = {
-  prefix: "gib",
+  prefix: "<@916381538181062676>",
   "bot-health-channel": "916383072675590195",
   "unlisted-channel": "922099070535884860",
   "team-channel": "852993195801182218",
