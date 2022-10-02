@@ -46,7 +46,7 @@ export async function getSimpleProtocols() {
 export const exec = util.promisify(execRaw);
 
 export async function refreshAdapters() {
-    return exec("rm -rf DefiLlama-Adapters && git clone https://github.com/DefiLlama/DefiLlama-Adapters")
+    return exec("rm -rf DefiLlama-Adapters && git clone --depth 1 https://github.com/DefiLlama/DefiLlama-Adapters")
 }
 
 export async function topChangers(args: string[], gainers: boolean) {
