@@ -6,6 +6,7 @@ import config from './config/botConfig';
 import {setUnlistedProtocols, triggerUnlistedAlarms} from './unlistedAlerts'
 import { checkApiStatus } from './checkApiServer'
 import { getMostVisitedPages } from './reports/buildReport';
+import axios from 'axios'
 
 const PORT = process.env.PORT || 5000;
 
@@ -26,6 +27,18 @@ app.use('/send-daily-report', (request: Request, response: Response) => {
   getMostVisitedPages();
   response.sendStatus(200);
 });
+
+app.use('/rebuild-server', (request: Request, response: Response) => {
+  axios.post("https://api.github.com/repos/DefiLlama/defillama-server/dispatches", '{"event_type": "build"}', {
+    headers:{
+      Accept: "application/vnd.github.everest-preview+json",
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${ process.env.PAT }`
+    }
+  })
+  response.sendStatus(200);
+});
+
 
 app.use(express.urlencoded({ extended: true }));
 
