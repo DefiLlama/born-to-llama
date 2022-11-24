@@ -67,7 +67,7 @@ export async function getUnlistedProtocols() {
     const protocols = await getSimpleProtocols()
     await refreshPromise;
 
-    const files = ['./DefiLlama-Adapters/projects/', './DefiLlama-Adapters/volumes/adapters/']
+    const files = ['./DefiLlama-Adapters/projects/']
         .map(dir => fs.readdirSync(dir)).reduce((total, curr)=>total.concat(curr));
     const modules = protocols.map(p => p.module.split('/')[0])
     const unlisted = files.filter(file => !modules.includes(file) && !ignoredFiles.includes(file))
