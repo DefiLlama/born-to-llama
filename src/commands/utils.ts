@@ -45,8 +45,12 @@ export async function getSimpleProtocols() {
 
 export const exec = util.promisify(execRaw);
 
-export async function refreshAdapters() {
+async function refreshAdapters() {
     return exec("rm -rf DefiLlama-Adapters && git clone --depth 1 https://github.com/DefiLlama/DefiLlama-Adapters")
+}
+
+async function refreshDimensionAdapters() {
+    return exec("rm -rf dimension-adapters && git clone --depth 1 https://github.com/DefiLlama/dimension-adapters")
 }
 
 export async function topChangers(args: string[], gainers: boolean) {
@@ -72,4 +76,13 @@ export async function getUnlistedProtocols() {
     const modules = protocols.map(p => p.module.split('/')[0])
     const unlisted = files.filter(file => !modules.includes(file) && !ignoredFiles.includes(file))
     return unlisted
+}
+
+export async function getDimensionProtocolsAdapters() {
+    await refreshDimensionAdapters()
+
+    const files = ["aggregators", "dexs", "fees", "incentives", "options"]
+        .map(dir => ({files: fs.readdirSync(`./dimension-adapters/${dir}`), section: dir}))
+        .reduce((total, curr)=>total.concat(curr.files.map(d=>`${curr.section}: ${d}`)), [] as string[]);
+    return files
 }
