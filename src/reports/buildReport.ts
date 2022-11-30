@@ -96,6 +96,6 @@ export async function getMostVisitedPages() {
     }, {
         height: 600,
         width: 600
-    })
+    }, "white")
     await sendChart(image)
 }

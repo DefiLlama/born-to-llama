@@ -7,6 +7,7 @@ import {setUnlistedProtocols, triggerUnlistedAlarms} from './unlistedAlerts'
 import { checkApiStatus } from './checkApiServer'
 import { getMostVisitedPages } from './reports/buildReport';
 import axios from 'axios'
+import { draw } from './reports/chart';
 
 const PORT = process.env.PORT || 5000;
 
@@ -37,6 +38,46 @@ app.use('/rebuild-server', (request: Request, response: Response) => {
     }
   })
   response.sendStatus(200);
+});
+
+app.use('/yield-chart/:id', async (request: Request, response: Response) => {
+  const data = await axios.get(`https://yields.llama.fi/chart/${request.params.id}`)
+  const image = await draw({
+    type: 'line' as any,
+    data: {
+      datasets: [{
+        data: data.data.data.map(({ apy, timestamp }: any) => ({ x: timestamp, y: apy })),
+        backgroundColor: "black",
+        borderColor: "black",
+      }],
+    },
+    options: {
+      scales: {
+        x: {
+          display: false,
+        },
+        y: {
+          display: false,
+        },
+      },
+      plugins: {
+        legend: {
+          display: false
+        },
+      },
+      elements: {
+        point: {
+          radius: 0
+        }
+      }
+    },
+  }, {
+    height: 100,
+    width: 200,
+  })
+  response.set("Content-Disposition", "inline;");
+  response.contentType('image/png');
+  response.send(image);
 });
 
 
