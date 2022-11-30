@@ -77,6 +77,7 @@ try{
     width: 100,
   })
   response.set("Content-Disposition", "inline;");
+  response.set("Cache-Control", "max-age=3600");
   response.contentType('image/png');
   response.send(image);
 } catch(e){
