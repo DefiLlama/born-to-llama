@@ -41,6 +41,7 @@ app.use('/rebuild-server', (request: Request, response: Response) => {
 });
 
 app.use('/yield-chart/:id', async (request: Request, response: Response) => {
+try{
   const data = await axios.get(`https://yields.llama.fi/chart/${request.params.id}`)
   const image = await draw({
     type: 'line' as any,
@@ -78,6 +79,9 @@ app.use('/yield-chart/:id', async (request: Request, response: Response) => {
   response.set("Content-Disposition", "inline;");
   response.contentType('image/png');
   response.send(image);
+} catch(e){
+  response.sendStatus(400);
+}
 });
 
 
