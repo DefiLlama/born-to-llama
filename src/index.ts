@@ -44,12 +44,15 @@ app.use('/yield-chart/:id', async (request: Request, response: Response) => {
 try{
   const data = await axios.get(`https://yields.llama.fi/chart/${request.params.id}`)
   const lastDay = new Date(Date.now() - 30*24*3600e3)
+  const dataset = data.data.data.filter(({timestamp}:any)=>new Date(timestamp) > lastDay)
+  const firstAPy = dataset[0].apy
+  const lastApy = dataset[dataset.length-1].apy
   const image = await draw({
     type: 'line' as any,
     data: {
       datasets: [{
-        data: data.data.data.filter(({timestamp}:any)=>new Date(timestamp) > lastDay).map(({ apy, timestamp }: any) => ({ x: timestamp, y: apy })),
-        borderColor: "#A9A9A9",
+        data: dataset.map(({ apy, timestamp }: any) => ({ x: timestamp, y: apy })),
+        borderColor: lastApy > firstAPy? "#90ee90":"#ff6961",
       }],
     },
     options: {
