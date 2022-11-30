@@ -73,8 +73,8 @@ try{
       }
     },
   }, {
-    height: 100,
-    width: 200,
+    height: 50,
+    width: 100,
   })
   response.set("Content-Disposition", "inline;");
   response.contentType('image/png');
