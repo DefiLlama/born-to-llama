@@ -9,3 +9,4 @@ export * from "./tokenIds";
 export * from "./outdated";
 export * from "./chains";
 export * from "./missingIds";
+export * from "./deleteCache";
