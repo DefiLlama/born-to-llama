@@ -8,11 +8,18 @@ export class DeleteCacheCommand implements Command {
   commandNames = ["delete-cache"];
 
   async run(message: Message, parsed:CommandParser): Promise<string> {
-    const protocolName = parsed.args.join(" ")
+    let protocolName = parsed.args.join(" ")
+    const isTreasury = protocolName.endsWith("(treasury)")
+    if(isTreasury){
+      protocolName = protocolName.slice(0, -" (treasury)".length)
+    }
     const protocols = await getLiteProtocols()
-    const protocolId = protocols.find(p=>p.name.toLowerCase() === protocolName.toLowerCase())?.defillamaId
+    let protocolId = protocols.find(p=>p.name.toLowerCase() === protocolName.toLowerCase())?.defillamaId
     if(protocolId === undefined){
         return "No protocol with that name!"
+    }
+    if(isTreasury){
+      protocolId += "-treasury"
     }
     await deleteObjects(protocolId)
     return "Objects deleted"
