@@ -4,6 +4,7 @@ import { CommandParser } from "../models/commandParser";
 import axios from "axios";
 
 const ADMIN_AUTH = process.env.ADMIN_AUTH;
+const apikey = process.env.apikey;
 
 export class RefreshIconCommand implements Command {
   commandNames = ["refresh-icon"];
@@ -20,7 +21,7 @@ export class RefreshIconCommand implements Command {
     }
 
     const res = await axios.post(
-      "https://icons.llamao.fi/purge",
+      "https://icons.llamao.fi/purge?apikey=" + apikey,
       { urls },
       {
         headers: {
