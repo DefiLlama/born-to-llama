@@ -4,7 +4,7 @@ import { CommandParser } from "../models/commandParser";
 
 const ADMIN_AUTH = process.env.ADMIN_AUTH;
 
-export class DeleteCacheCommand implements Command {
+export class RefreshIconCommand implements Command {
   commandNames = ["refresh-icon"];
 
   async run(message: Message, parsed: CommandParser): Promise<string> {
