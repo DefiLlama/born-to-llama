@@ -1,6 +1,7 @@
 import Command from "./commandInterface";
 import { Message } from "discord.js";
 import { CommandParser } from "../models/commandParser";
+import fetch from "node-fetch";
 
 const ADMIN_AUTH = process.env.ADMIN_AUTH;
 
