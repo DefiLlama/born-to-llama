@@ -1,7 +1,7 @@
 import Command from "./commandInterface";
 import { Message } from "discord.js";
 import { CommandParser } from "../models/commandParser";
-import fetch from "node-fetch";
+import axios from "axios";
 
 const ADMIN_AUTH = process.env.ADMIN_AUTH;
 
@@ -19,17 +19,19 @@ export class RefreshIconCommand implements Command {
       return "No url provided";
     }
 
-    const res = await fetch("https://icons.llamao.fi/purge", {
-      method: "POST",
-      headers: {
-        authorization,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ urls }),
-    });
+    const res = await axios.post(
+      "https://icons.llamao.fi/purge",
+      { urls },
+      {
+        headers: {
+          authorization,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-    if (!res.ok) {
-      return `Error: ${res.status} ${res.statusText}`;
+    if (res.status !== 200) {
+      return `error ${res.status} purging cache: ${res.statusText}`;
     }
 
     return "icon cache purged";
