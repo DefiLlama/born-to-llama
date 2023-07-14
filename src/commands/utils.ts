@@ -65,7 +65,12 @@ export async function topChangers(args: string[], gainers: boolean) {
     return protocols.map(p => `${p[prop].toFixed(2)}% - ${p.name} - ${p.tvl}`).join('\n');
 }
 
-const ignoredFiles = ["helper", "config"]
+const ignoredFiles = [
+    "helper", "config", "treasury","harvest.js", "1inch.js", "pawnfi", "fantom.js", "trxStakingGovernance", "swapcat", "shiden-dapps-staking", "shadeprotocol-silk", "sencha", "scrt.js", "rose-finance",
+    "parallel-crowdloan", "opulous", "olafinance", "ocean-protocol", "astar-dapps-staking", "blackgoat-finance", "coconuts-finance", "cryptomate.js", "elevenfinance", "enso-finance",
+    "evolutionland", "forcedao", "kccguru", "kokoswap", "lachainBridge.js", "liquidswap", "malt-money", "pole", "prosper", "quartzdefi", "safedollar", "solfire-protocol",
+    "solhero", "tower-finance", "traverse", "union", "upfi.js"
+]
 export async function getUnlistedProtocols() {
     const refreshPromise = refreshAdapters()
     const protocols = await getSimpleProtocols()
