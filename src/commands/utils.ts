@@ -15,16 +15,8 @@ function streamToString(stream: Stream) {
 }
 
 export async function getRawLiteProtocols() {
-    const protocols = await axios.get("https://api.llama.fi/lite/protocols2", {
-        decompress: false,
-        responseType: 'stream',
-        // if you want to enhance the default transformResponse, instead of replacing,
-        // use an array to contain both the default and the customized
-        transformResponse(data) {
-            return data.pipe(zlib.createBrotliDecompress())
-        }
-    }).then(r => streamToString(r.data)) as any
-    return JSON.parse(protocols) as any
+    const protocols = await axios.get("https://api.llama.fi/lite/protocols2")
+    return protocols.data
 }
 
 
