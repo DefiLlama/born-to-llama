@@ -57,6 +57,11 @@ async function refreshDimensionAdapters() {
     return exec("rm -rf dimension-adapters && git clone --depth 1 https://github.com/DefiLlama/dimension-adapters")
 }
 
+async function refreshEmissionsAdapters() {
+    return exec("rm -rf emissions-adapters && git clone --depth 1 https://github.com/DefiLlama/emissions-adapters")
+}
+
+
 export async function topChangers(args: string[], gainers: boolean) {
     let prop = "change_1d"
     if (args[0] === "week") {
@@ -99,3 +104,15 @@ export async function getDimensionProtocolsAdapters() {
         .reduce((total, curr)=>total.concat(curr.files.map(d=>`${curr.section}: ${d}`)), [] as string[]);
     return files
 }
+
+export async function getEmissionProtocolsAdapters() {
+    await refreshEmissionsAdapters();
+  
+    const files = ['protocols']
+      .map((dir) => fs.readdirSync(`./emissions-adapters/${dir}`))
+      .reduce((total, curr) => total.concat(curr))
+      .map((val) => val.replace('.ts', ''));
+
+    return files;
+  }
+  
