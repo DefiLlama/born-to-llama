@@ -68,7 +68,6 @@ Content-Type: image/png
 }
 
 export async function getMostVisitedPages() {
-    const prevDay = getDayBefore(1)
     const params = {
         entity: "pageview",
         entity_id: "OANJVQNZ",
@@ -77,8 +76,8 @@ export async function getMostVisitedPages() {
         field_grouping: "pathname",
         limit: "20",
         sort_by: "uniques:desc",
-        date_from: prevDay,
-        date_to: prevDay,
+        date_from: getDayBefore(1),
+        date_to: getDayBefore(0),
     }
     const data = await getFathomData(params)
     const image = await draw({
