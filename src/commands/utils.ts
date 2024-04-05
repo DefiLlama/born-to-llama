@@ -89,10 +89,10 @@ export async function getUnlistedProtocols() {
     const protocols = await getSimpleProtocols()
     await refreshPromise;
 
-    const files = ['./DefiLlama-Adapters/projects/']
-        .map(dir => fs.readdirSync(dir)).reduce((total, curr)=>total.concat(curr));
+    const [files, treasuries] = ['./DefiLlama-Adapters/projects/', `./DefiLlama-Adapters/projects/treasury/`]
+        .map(dir => fs.readdirSync(dir))
     const modules = protocols.map(p => p.module.split('/')[0])
-    const unlisted = files.filter(file => !modules.includes(file) && !ignoredFiles.includes(file))
+    const unlisted = files.filter(file => !modules.includes(file) && !ignoredFiles.includes(file)).concat(treasuries.map(t=>`treasury/${t}`))
     return unlisted
 }
 
@@ -112,17 +112,6 @@ export async function getEmissionProtocolsAdapters() {
       .map((dir) => fs.readdirSync(`./emissions-adapters/${dir}`))
       .reduce((total, curr) => total.concat(curr))
       .map((val) => val.replace('.ts', ''));
-
-    return files;
-}
-
-export async function getUnlistedTreasuryAdapters() {
-    await refreshAdapters();
-  
-    const files = ['']
-      .map((dir) => fs.readdirSync(`./DefiLlama-Adapters/projects/treasury`))
-      .reduce((total, curr) => total.concat(curr))
-      .map((val) => val.replace('.js', ''));
 
     return files;
 }

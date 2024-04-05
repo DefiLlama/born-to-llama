@@ -1,11 +1,10 @@
-import { getUnlistedProtocols, getDimensionProtocolsAdapters, getEmissionProtocolsAdapters, getUnlistedTreasuryAdapters } from './commands/utils'
+import { getUnlistedProtocols, getDimensionProtocolsAdapters, getEmissionProtocolsAdapters } from './commands/utils'
 import config from './config/botConfig';
 import Discord, { TextChannel } from "discord.js";
 
 let unlisted = [] as string[]
 let dimensionAdapters = [] as string[]
 let emissionAdapters = [] as string[]
-let unlistedTreasuries = [] as string[]
 
 export function setUnlistedProtocols() {
     getUnlistedProtocols().then(newUnlisted => {
@@ -17,14 +16,11 @@ export function setUnlistedProtocols() {
     getEmissionProtocolsAdapters().then(adapters=>{ 
         emissionAdapters = adapters;
     })
-    getUnlistedTreasuryAdapters().then(adapters=>{ 
-        unlistedTreasuries = adapters;
-    })
 }
 
 export async function triggerUnlistedAlarms(client: Discord.Client) {
     await Promise.all([triggerUnlistedTvlAlarms(client), triggerUnlistedDimensionAlarms(client),
-        triggerUnlistedEmissionAlarms(client), triggerUnlistedTreasuryAlarms(client)])
+        triggerUnlistedEmissionAlarms(client)])
 }
 
 async function triggerUnlistedTvlAlarms(client: Discord.Client) {
@@ -34,15 +30,6 @@ async function triggerUnlistedTvlAlarms(client: Discord.Client) {
     
     await alertUnlisted(newUnlisted, oldUnlisted, client)
 }
-
-async function triggerUnlistedTreasuryAlarms(client: Discord.Client) {
-    const newUnlisted = await getUnlistedTreasuryAdapters()
-    const oldUnlisted = [...unlistedTreasuries];
-    unlistedTreasuries = newUnlisted;
-    
-    await alertUnlisted(newUnlisted, oldUnlisted, client, "treasury: ")
-}
-
 
 async function triggerUnlistedDimensionAlarms(client: Discord.Client) {
     const newUnlisted = await getDimensionProtocolsAdapters()
