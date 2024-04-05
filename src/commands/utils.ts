@@ -114,5 +114,15 @@ export async function getEmissionProtocolsAdapters() {
       .map((val) => val.replace('.ts', ''));
 
     return files;
-  }
+}
+
+export async function getUnlistedTreasuryAdapters() {
+    await refreshAdapters();
   
+    const files = ['']
+      .map((dir) => fs.readdirSync(`./DefiLlama-Adapters/projects/treasury`))
+      .reduce((total, curr) => total.concat(curr))
+      .map((val) => val.replace('.js', ''));
+
+    return files;
+}
