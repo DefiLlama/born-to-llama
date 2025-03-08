@@ -1,6 +1,6 @@
 import Command from "./commandInterface";
 import { Message } from "discord.js";
-import { getRawLiteProtocols } from './utils'
+import { getProtocols, getRawLiteProtocols } from './utils'
 import { CommandParser } from "../models/commandParser"
 import { deleteObjects } from "../utils/r2";
 import axios from "axios";
@@ -14,7 +14,8 @@ export class DeleteCacheCommand implements Command {
     if (isTreasury) {
       protocolName = protocolName.slice(0, -" (treasury)".length)
     }
-    const { protocols, parentProtocols } = await getRawLiteProtocols()
+    const protocols = await getProtocols()
+    const { parentProtocols } = await getRawLiteProtocols()
     let protocol = protocols.concat(parentProtocols).find((p: any) => p.name.toLowerCase() === protocolName.toLowerCase())
     if (protocol === undefined) {
       return "No protocol with that name!"
