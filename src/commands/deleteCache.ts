@@ -27,7 +27,7 @@ export class DeleteCacheCommand implements Command {
     // await deleteObjects(protocolId)
     const { API2_SERVER_URL } = process.env
     if (!API2_SERVER_URL) return 'Missing required env var: API2_SERVER_URL'
-    await axios.delete(`${API2_SERVER_URL}/debug-pg/tvl-cache-daily-v0.5/${protocolId}`)
+    await axios.delete(`${API2_SERVER_URL}/debug-pg/tvl-cache-daily-v0.6/${protocolId}`)
     return "Objects deleted"
   }
 }
