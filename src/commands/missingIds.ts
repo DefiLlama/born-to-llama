@@ -29,6 +29,7 @@ interface Protocol {
 	gecko_id: string;
 	symbol: string;
 	deadUrl?: boolean;
+	parentProtocol?: string;
 }
 
 function processItems(items: (CMCItem | CGItem)[], symbol: string): string[] {
@@ -56,8 +57,10 @@ export class MissingIdsCommand implements Command {
 			getProtocols(),
 		]);
 
-		// Filter out any protocols marked deadUrl: true
-		const protocols = (allProtocols as Protocol[]).filter((p) => !p.deadUrl);
+		// Filter out any protocols marked deadUrl: true or that have a parentProtocol
+		const protocols = (allProtocols as Protocol[]).filter(
+			(p) => !p.deadUrl && !p.parentProtocol
+		);
 
 		// Protocols missing a symbol
 		const namelessProtocols = protocols.filter((p) => !p.symbol).map((p) => p.name);
