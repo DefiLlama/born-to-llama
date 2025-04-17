@@ -1,82 +1,94 @@
-import Command from "./commandInterface"
-import { Message } from "discord.js"
-import { CommandParser } from "../models/commandParser"
-import { getProtocols } from './utils'
-import axios from "axios"
+import Command from "./commandInterface";
+import { Message } from "discord.js";
+import { CommandParser } from "../models/commandParser";
+import { getProtocols } from './utils';
+import axios from "axios";
 
 interface CMCItem {
-	first_historical_data: string
-	id: number
-	is_active: number
-	last_historical_data: string
-	name: string
-	rank: number
-	slug: string
-	status: string
-	symbol: string
+	first_historical_data: string;
+	id: number;
+	is_active: number;
+	last_historical_data: string;
+	name: string;
+	rank: number;
+	slug: string;
+	status: string;
+	symbol: string;
 }
 
 interface CGItem {
-	id: string
-	name: string
-	platforms: any
-	symbol: string
+	id: string;
+	name: string;
+	platforms: any;
+	symbol: string;
 }
 
 interface Protocol {
-	name: string
-	cmcId: string
-	gecko_id: string
-	symbol: string
+	name: string;
+	cmcId: string;
+	gecko_id: string;
+	symbol: string;
+	deadUrl?: boolean;
 }
 
-function processItems(items: (CMCItem | CGItem)[], symbol: string) {
-	symbol = symbol.toLowerCase()
-	return items.filter((t) => t.symbol.toLowerCase() === symbol)
-		.map(t => `${t.id} (${t.name})`)
+function processItems(items: (CMCItem | CGItem)[], symbol: string): string[] {
+	symbol = symbol.toLowerCase();
+	return items
+		.filter((t) => t.symbol.toLowerCase() === symbol)
+		.map((t) => `${t.id} (${t.name})`);
 }
 
 export class MissingIdsCommand implements Command {
-	commandNames = ["missing-ids"]
+	commandNames = ["missing-ids"];
 
 	async run(message: Message, parsed: CommandParser): Promise<string> {
-		const [{ data: coinGeckoData }, {
-			data: { data: { cryptoCurrencyMap: cmcData } }
-		}, protocols] = await Promise.all([
-			axios.get("https://api.coingecko.com/api/v3/coins/list?include_platform=true"),
-			axios.get("https://api.coinmarketcap.com/data-api/v3/map/all?listing_status=active,inactive,untracked&start=1&limit=10000"),
-			getProtocols()
-		])
+		const [
+			{ data: coinGeckoData },
+			{ data: { data: { cryptoCurrencyMap } } },
+			allProtocols
+		] = await Promise.all([
+			axios.get<CGItem[]>(
+				"https://api.coingecko.com/api/v3/coins/list?include_platform=true"
+			),
+			axios.get<{ data: { cryptoCurrencyMap: { [key: string]: CMCItem } } }>(
+				"https://api.coinmarketcap.com/data-api/v3/map/all?listing_status=active,inactive,untracked&start=1&limit=10000"
+			),
+			getProtocols(),
+		]);
 
-		const incompleteProtocols = protocols.filter(p => !p.cmcId || !p.gecko_id)
-		const namelessProtocols = protocols.filter(p => !p.symbol).map(p => p.name)
-		let returnText = `Protocols without tokens: ${namelessProtocols.length}\n${getSetsText(namelessProtocols)}`
-		const divider = '\n ---------- \n'
-		const missingGecko: string[] = []
-		const missingCMC: string[] = []
-		const missingBoth: string[] = []
-		let fixableText = ''
+		// Filter out any protocols marked deadUrl: true
+		const protocols = (allProtocols as Protocol[]).filter((p) => !p.deadUrl);
+
+		// Protocols missing a symbol
+		const namelessProtocols = protocols.filter((p) => !p.symbol).map((p) => p.name);
+		// Protocols missing one or both IDs
+		const incompleteProtocols = protocols.filter((p) => !p.cmcId || !p.gecko_id);
+
+		let returnText = `Protocols without tokens: ${namelessProtocols.length}\n${getSetsText(namelessProtocols)}`;
+		const divider = "\n ---------- \n";
+		const missingGecko: string[] = [];
+		const missingCMC: string[] = [];
+		const missingBoth: string[] = [];
+		let fixableText = "";
 
 		incompleteProtocols
-			.filter(p => p.symbol)
-			.forEach(({ symbol, cmcId, gecko_id, name }: Protocol) => {
-				const cmcIds = processItems(cmcData, symbol)
-				const cgIds = processItems(coinGeckoData, symbol)
-				let cmcSet = !cmcId && cmcIds.length
-				let cgSet = !gecko_id && cgIds.length
+			.filter((p) => p.symbol)
+			.forEach(({ symbol, cmcId, gecko_id, name }) => {
+				const cmcIds = processItems(Object.values(cryptoCurrencyMap), symbol);
+				const cgIds = processItems(coinGeckoData, symbol);
+				const cmcSet = !cmcId && cmcIds.length > 0;
+				const cgSet = !gecko_id && cgIds.length > 0;
+
 				if (cmcSet || cgSet) {
-					fixableText = `${fixableText}\n\n${name} (${symbol}):`
-					if (cmcSet) fixableText = `${fixableText}\n - CMC: ${cmcIds.join(', ')}`
-					if (cgSet) fixableText = `${fixableText}\n - Coingecko: ${cgIds.join(', ')}`
+					fixableText += `\n\n${name} (${symbol}):`;
+					if (cmcSet) fixableText += `\n - CMC: ${cmcIds.join(", ")}`;
+					if (cgSet) fixableText += `\n - Coingecko: ${cgIds.join(", ")}`;
 				} else {
-					if (cmcId)
-						missingGecko.push(name)
-					else if (gecko_id)
-						missingCMC.push(name)
-					else
-						missingBoth.push(name)
-				};
-			})
+					if (cmcId) missingGecko.push(name);
+					else if (gecko_id) missingCMC.push(name);
+					else missingBoth.push(name);
+				}
+			});
 
 		return [
 			returnText,
@@ -84,13 +96,14 @@ export class MissingIdsCommand implements Command {
 			`Unable to find token in CMC: ${missingCMC.length}\n${getSetsText(missingCMC)}`,
 			`Unable to find token in both: ${missingBoth.length}\n${getSetsText(missingBoth)}`,
 			fixableText,
-		].join(divider)
+		].join(divider);
 	}
 }
 
-function getSetsText(array: string[], size = 10) {
-	const replyText = []
-	for (let i = 0; i < array.length; i += size)
-		replyText.push(array.slice(i, i + size))
-	return replyText.join('\n')
+function getSetsText(array: string[], size = 10): string {
+	const replyText: string[] = [];
+	for (let i = 0; i < array.length; i += size) {
+		replyText.push(array.slice(i, i + size).join(", "));
+	}
+	return replyText.join("\n");
 }
