@@ -45,13 +45,13 @@ export class MissingIdsCommand implements Command {
 	async run(message: Message, parsed: CommandParser): Promise<string> {
 		const [
 			{ data: coinGeckoData },
-			{ data: { data: { cryptoCurrencyMap } } },
+			{ data: { data: { cryptoCurrencyMap: cmcData } } },
 			allProtocols
 		] = await Promise.all([
 			axios.get<CGItem[]>(
 				"https://api.coingecko.com/api/v3/coins/list?include_platform=true"
 			),
-			axios.get<{ data: { cryptoCurrencyMap: { [key: string]: CMCItem } } }>(
+			axios.get<{ data: { cryptoCurrencyMap: CMCItem[] } }>(
 				"https://api.coinmarketcap.com/data-api/v3/map/all?listing_status=active,inactive,untracked&start=1&limit=10000"
 			),
 			getProtocols(),
@@ -62,7 +62,7 @@ export class MissingIdsCommand implements Command {
 			(p) => !p.deadUrl && !p.parentProtocol
 		);
 
-		// Capture protocols missing a symbol
+		// Protocols missing a symbol
 		const namelessProtocols = protocols.filter((p) => !p.symbol).map((p) => p.name);
 		// Protocols missing one or both IDs
 		const incompleteProtocols = protocols.filter((p) => !p.cmcId || !p.gecko_id);
@@ -77,8 +77,8 @@ export class MissingIdsCommand implements Command {
 		incompleteProtocols
 			.filter((p) => p.symbol)
 			.forEach(({ symbol, cmcId, gecko_id, name }) => {
-				const cmcItems = Object.values(cryptoCurrencyMap);
-				const cmcIds = processItems(cmcItems, symbol);
+				// Use cmcData array directly
+				const cmcIds = processItems(cmcData, symbol);
 				const cgIds = processItems(coinGeckoData, symbol);
 				const cmcSet = !cmcId && cmcIds.length > 0;
 				const cgSet = !gecko_id && cgIds.length > 0;
