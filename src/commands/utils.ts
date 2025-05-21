@@ -99,7 +99,7 @@ export async function getUnlistedProtocols() {
 export async function getDimensionProtocolsAdapters() {
     await refreshDimensionAdapters()
 
-    const files = ["aggregators", "dexs", "fees", "incentives", "options", "protocols"]
+    const files = ["aggregators", "dexs", "fees", "incentives", "options"]
         .map(dir => ({files: fs.readdirSync(`./dimension-adapters/${dir}`), section: dir}))
         .reduce((total, curr)=>total.concat(curr.files.map(d=>`${curr.section}: ${d}`)), [] as string[]);
     return files
