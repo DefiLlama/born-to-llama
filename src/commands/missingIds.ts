@@ -67,7 +67,7 @@ export class MissingIdsCommand implements Command {
 		// Protocols missing one or both IDs
 		const incompleteProtocols = protocols.filter((p) => !p.cmcId || !p.gecko_id);
 
-		let returnText = `Protocols without tokens: ${namelessProtocols.length}\n${getSetsText(namelessProtocols)}`;
+		const returnText = `Protocols without tokens: ${namelessProtocols.length}\n${getSetsText(namelessProtocols)}`;
 		const divider = "\n ---------- \n";
 		const missingGecko: string[] = [];
 		const missingCMC: string[] = [];
