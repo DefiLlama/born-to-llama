@@ -75,7 +75,7 @@ export class MissingIdsCommand implements Command {
 		let fixableText = "";
 
 		incompleteProtocols
-			.filter((p) => p.symbol)
+			.filter((p) => p.symbol && p.symbol !== "-")
 			.forEach(({ symbol, cmcId, gecko_id, name }) => {
 				// Use cmcData array directly
 				const cmcIds = processItems(cmcData, symbol);
